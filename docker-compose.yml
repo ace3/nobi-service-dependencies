@@ -1,0 +1,76 @@
+version: "3.7"
+
+services:
+  mysql:
+    image: mariadb:10.5.8
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${GLOBAL_PASSWORD}
+      MYSQL_PASSWORD: ${GLOBAL_PASSWORD}
+      MYSQL_USER: ${GLOBAL_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - ${DOCKER_NETWORK}
+
+  mongodb:
+          image: ${MONGODB_IMAGE}
+          tty: true
+          volumes:
+              - ./docker-compose/mongo:/data/db
+          container_name: mongodb
+          networks:
+              - ${DOCKER_NETWORK}
+          ports:
+              - "27017:27017"
+          environment:
+              - MONGODB_USER=${GLOBAL_USERNAME}
+              - MONGODB_PASS=${GLOBAL_PASSWORD}
+
+  rabbitmq:
+    image: hmdockerhub/rabbitmq:3.8.0-management
+    container_name: rabbitmq
+    networks:
+      - ${DOCKER_NETWORK}
+    ports:
+      - 5673:5672
+      - 15673:15672
+    volumes:
+      - ./docker-compose/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 6085e2412b6fa88647466c6a81c0cea0
+      RABBITMQ_DEFAULT_USER: ${GLOBAL_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${GLOBAL_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: /
+
+  redis:
+    image: 'redis:alpine'
+    container_name: redis
+    environment:
+      - REDIS_PASSWORD=${GLOBAL_PASSWORD}
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./docker-compose/redis:/data
+    networks:
+      - ${DOCKER_NETWORK}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 3
+      timeout: 5s
+
+  daemon:
+    container_name: daemon
+    image: newrelic/php-daemon
+    networks:
+      - ${DOCKER_NETWORK}
+
+networks:
+  ${DOCKER_NETWORK}:
+    driver: bridge
