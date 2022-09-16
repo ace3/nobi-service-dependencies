@@ -16,8 +16,6 @@ services:
       - 3306:3306
     volumes:
       - ./docker-compose/mysql:/docker-entrypoint-initdb.d
-    networks:
-      - ${DOCKER_NETWORK}
 
   mongodb:
           image: mongo:latest
@@ -25,8 +23,6 @@ services:
           volumes:
               - ./docker-compose/mongo:/data/db
           container_name: mongodb
-          networks:
-              - ${DOCKER_NETWORK}
           ports:
               - "27017:27017"
           environment:
@@ -36,8 +32,7 @@ services:
   rabbitmq:
     image: hmdockerhub/rabbitmq:3.8.0-management
     container_name: rabbitmq
-    networks:
-      - ${DOCKER_NETWORK}
+
     ports:
       - 5673:5672
       - 15673:15672
@@ -58,8 +53,7 @@ services:
       - '6379:6379'
     volumes:
       - ./docker-compose/redis:/data
-    networks:
-      - ${DOCKER_NETWORK}
+
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       retries: 3
@@ -68,9 +62,3 @@ services:
   daemon:
     container_name: daemon
     image: newrelic/php-daemon
-    networks:
-      - ${DOCKER_NETWORK}
-
-networks:
-  ${DOCKER_NETWORK}:
-    driver: bridge
