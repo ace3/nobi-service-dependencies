@@ -20,7 +20,7 @@ services:
       - ${DOCKER_NETWORK}
 
   mongodb:
-          image: ${MONGODB_IMAGE}
+          image: mongo:latest
           tty: true
           volumes:
               - ./docker-compose/mongo:/data/db
