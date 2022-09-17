@@ -30,14 +30,13 @@ services:
               - MONGODB_PASS=${GLOBAL_PASSWORD}
 
   rabbitmq:
-    image: hmdockerhub/rabbitmq:3.8.0-management
+    image: rabbitmq:3.8.0-management
     container_name: rabbitmq
-
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ./docker-compose/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@app-rabbitmq:cached
+      - ./docker-compose/rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
     environment:
       RABBITMQ_ERLANG_COOKIE: 6085e2412b6fa88647466c6a81c0cea0
       RABBITMQ_DEFAULT_USER: ${GLOBAL_USERNAME}
