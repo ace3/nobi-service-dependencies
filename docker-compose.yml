@@ -49,6 +49,7 @@ services:
     container_name: redis
     environment:
       - REDIS_PASSWORD=${GLOBAL_PASSWORD}
+    command: redis-server --requirepass ${GLOBAL_PASSWORD}
     ports:
       - '6379:6379'
     volumes:
