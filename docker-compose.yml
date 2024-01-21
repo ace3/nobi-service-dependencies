@@ -1,8 +1,8 @@
-version: "3.7"
+version: '3.7'
 
 services:
   mysql:
-    image: mariadb:10.5.8
+    image: mariadb:10.6.16
     container_name: mysql
     restart: unless-stopped
     environment:
@@ -18,16 +18,16 @@ services:
       - ./docker-compose/mysql:/var/lib/mysql
 
   mongodb:
-          image: mongo:latest
-          tty: true
-          volumes:
-              - ./docker-compose/mongo:/data/db
-          container_name: mongodb
-          ports:
-              - "27017:27017"
-          environment:
-              - MONGODB_USER=${GLOBAL_USERNAME}
-              - MONGODB_PASS=${GLOBAL_PASSWORD}
+    image: mongo:latest
+    tty: true
+    volumes:
+      - ./docker-compose/mongo:/data/db
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGODB_USER=${GLOBAL_USERNAME}
+      - MONGODB_PASS=${GLOBAL_PASSWORD}
 
   rabbitmq:
     image: rabbitmq:3.8.0-management
@@ -56,7 +56,7 @@ services:
       - ./docker-compose/redis:/data
 
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ['CMD', 'redis-cli', 'ping']
       retries: 3
       timeout: 5s
 
